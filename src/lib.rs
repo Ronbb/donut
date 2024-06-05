@@ -1,4 +1,6 @@
 pub mod context;
+pub mod cursor;
+pub mod error;
 pub mod flow;
 pub mod procedure;
 pub mod provider;
