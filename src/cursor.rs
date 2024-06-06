@@ -1,4 +1,8 @@
-use std::collections::HashMap;
+use std::{
+    borrow::Borrow,
+    collections::HashMap,
+    sync::{Arc, Weak},
+};
 
 use crate::{
     context::Context,
@@ -8,66 +12,40 @@ use crate::{
     task::{Operation, Task},
 };
 
-pub struct Cursor<'procedure, 'parent> {
+pub struct Cursor {
     id: String,
-    scheduler: &'procedure Scheduler,
+    scheduler: Weak<Scheduler>,
     context: Context,
-    procedure: &'procedure Procedure,
-    current_task: &'procedure Task,
-    next: Operation<'parent>,
-    parent: Option<&'procedure Cursor<'procedure, 'parent>>,
-    children: HashMap<String, Cursor<'procedure, 'parent>>,
+    procedure: Weak<Procedure>,
+    current_task: Weak<Task>,
+    next_operation: Operation,
+    parent: Option<Weak<Cursor>>,
+    children: HashMap<String, Arc<Cursor>>,
 }
 
-impl Cursor<'_, '_> {
+impl Cursor {
     // execute current
     pub fn execute(&mut self) -> Result<(), Error> {
-        self.current_task.execute(self)?;
+        if let Some(current_task) = self.current_task.upgrade() {
+            current_task.execute(self)?;
+        } else {
+            return Err(Error::Canceled);
+        }
+
+        self.handle_next()?;
         Ok(())
     }
 
-    // get id
-    pub fn id(&self) -> &str {
-        &self.id
-    }
-
-    // get scheduler
-    pub fn scheduler(&self) -> &Scheduler {
-        self.scheduler
-    }
-
-    // get context
-    pub fn context(&self) -> &Context {
-        &self.context
-    }
-
-    // get context mut
-    pub fn context_mut(&mut self) -> &mut Context {
-        &mut self.context
-    }
-
-    // get procedure
-    pub fn procedure(&self) -> &Procedure {
-        self.procedure
-    }
-
-    // get current task
-    pub fn current_task(&self) -> &Task {
-        self.current_task
-    }
-
-    // get next operation
-    pub fn next(&self) -> &Operation {
-        &self.next
-    }
-
-    // get parent
-    pub fn parent(&self) -> Option<&Cursor> {
-        self.parent
-    }
-
-    // get children
-    pub fn children(&self) -> &HashMap<String, Cursor> {
-        &self.children
+    fn handle_next(&mut self) -> Result<(), Error> {
+        match self.next_operation.borrow() {
+            Operation::Next => {}
+            Operation::One(_) => {}
+            Operation::Parallel(_) => {}
+            Operation::Select(_) => {}
+            Operation::Wait(_, _) => {}
+            Operation::Complete => {}
+            Operation::Bubble => {}
+        }
+        Ok(())
     }
 }
