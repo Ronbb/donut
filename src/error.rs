@@ -1,5 +1,5 @@
 #[derive(Debug)]
 pub enum Error {
     Canceled,
-    NoNextTask { procedure: String, task: String },
+    NoNextNode { procedure: String, node: String },
 }

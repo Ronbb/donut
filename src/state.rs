@@ -1,9 +1,11 @@
 use std::collections::HashMap;
 
+#[derive(Clone)]
 pub struct State {
     value: HashMap<String, Variant>,
 }
 
+#[derive(Clone)]
 pub enum Variant {
     Null,
     String(String),

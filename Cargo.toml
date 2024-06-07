@@ -7,3 +7,5 @@ edition = "2021"
 name = "donut-server"
 
 [dependencies]
+tokio = { version = "1.38.0", features = ["full"] }
+tokio-util = "0.7.11"
