@@ -79,8 +79,26 @@ impl Executable {
                     return Err(Error::Canceled);
                 }
             }
-            Executable::Selection(flows) => todo!(),
-            Executable::Procedure(procedure) => todo!(),
+            Executable::Selection(flows) => {
+                for flow in flows {
+                    if let Some(flow) = flow.upgrade() {
+                        if flow.check_condition(cursor.clone()).await? {
+                            return Ok(Next::One(Executable::Flow(Arc::downgrade(&flow))));
+                        }
+                    } else {
+                        return Err(Error::Canceled);
+                    }
+                }
+
+                return Ok(Next::Null);
+            }
+            Executable::Procedure(procedure) => {
+                if let Some(procedure) = procedure.upgrade() {
+                    procedure.execute(cursor.clone()).await?;
+                } else {
+                    return Err(Error::Canceled);
+                }
+            }
         }
 
         Ok(Next::Null)
@@ -107,7 +125,7 @@ impl Executable {
                 .iter()
                 .map(|flow| Executable::Flow(flow.clone()))
                 .collect(),
-            Executable::Procedure(procedure) => todo!(),
+            Executable::Procedure(_) => vec![],
         }
     }
 }

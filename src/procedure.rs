@@ -1,6 +1,8 @@
 use std::{collections::HashMap, sync::Arc};
 
-use crate::{flow::Flow, node::Node};
+use tokio::sync::RwLock;
+
+use crate::{base::Next, cursor::Cursor, error::Error, flow::Flow, node::Node};
 
 #[derive(Debug)]
 pub struct Procedure {
@@ -17,5 +19,10 @@ impl Procedure {
             nodes: HashMap::new(),
             flows: HashMap::new(),
         }
+    }
+
+    pub async fn execute(&self, _: Arc<RwLock<Cursor>>) -> Result<Next, Error> {
+        // TODO start procedure
+        Ok(Next::Null)
     }
 }

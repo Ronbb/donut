@@ -35,13 +35,13 @@ impl Scheduler {
                 Cursor::from_procedure(Arc::downgrade(&scheduler), Arc::downgrade(&procedure))
                     .await;
             s.cursors.write().await.push(cursor.clone());
-            s.loop_cursor(cursor);
+            s.loop_run_cursor(cursor).await?;
         }
 
         Ok(())
     }
 
-    async fn loop_cursor(&mut self, cursor: Arc<RwLock<Cursor>>) -> Result<(), Error> {
+    async fn loop_run_cursor(&mut self, cursor: Arc<RwLock<Cursor>>) -> Result<(), Error> {
         loop {
             let mut cursor_ref = cursor.write().await;
             let (_, rx, cancel) = cursor_ref.signals();

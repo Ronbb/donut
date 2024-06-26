@@ -9,16 +9,19 @@ pub struct Flow {
     pub name: String,
     pub source_node: Weak<Node>,
     pub target_node: Weak<Node>,
-    pub condition_script: String,
+    pub condition: String,
+    pub script: String,
 }
 
 impl Flow {
     pub async fn check_condition(&self, _: Arc<RwLock<Cursor>>) -> Result<bool, Error> {
         let result = false;
+        // TODO execute condition script
         Ok(result)
     }
 
     pub async fn execute(&self, _: Arc<RwLock<Cursor>>) -> Result<Next, Error> {
-        Ok(Next::Null)
+        // TODO execute script
+        Ok(Next::Continue)
     }
 }
