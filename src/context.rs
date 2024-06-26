@@ -4,3 +4,11 @@ use crate::state::State;
 pub struct Context {
     pub state: State,
 }
+
+impl Context {
+    pub fn new() -> Self {
+        Self {
+            state: State::new(),
+        }
+    }
+}

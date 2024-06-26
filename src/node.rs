@@ -1,4 +1,6 @@
-use std::{cell::RefCell, sync::Arc, time::Duration};
+use std::sync::Arc;
+
+use tokio::sync::RwLock;
 
 use crate::{
     base::{Executable, Next},
@@ -6,7 +8,7 @@ use crate::{
     error::Error,
 };
 
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 pub struct Node {
     pub name: String,
     pub script: String,
@@ -15,7 +17,7 @@ pub struct Node {
 }
 
 impl Node {
-    pub async fn execute(&self, _: Arc<RefCell<Cursor>>) -> Result<Next, Error> {
+    pub async fn execute(&self, _: Arc<RwLock<Cursor>>) -> Result<Next, Error> {
         // TODO execute script
         Ok(Next::Null)
     }

@@ -17,6 +17,13 @@ pub enum Variant {
 }
 
 impl State {
+    // new
+    pub fn new() -> Self {
+        Self {
+            value: HashMap::new(),
+        }
+    }
+
     // set
     pub fn set(&mut self, key: String, value: Variant) {
         self.value.insert(key, value);
